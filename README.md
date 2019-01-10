@@ -6,8 +6,8 @@
     <a href="https://travis-ci.org/joesonw/bulkcache">
         <img src="https://img.shields.io/travis/joesonw/bulkcache/master.svg?style=flat-square">
     </a>
-    <a href="https://coveralls.io/r/t2ee/bulkcache?branch=master">
-        <img src="https://img.shields.io/coveralls/t2ee/bulkcache/master.svg?style=flat-square">
+    <a href="https://coveralls.io/r/joesonw/bulkcache?branch=master">
+        <img src="https://img.shields.io/coveralls/joesonw/bulkcache/master.svg?style=flat-square">
     </a>
 </p>
 
