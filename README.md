@@ -15,6 +15,10 @@
 
 `npm i bulkcache -S`
 
+## Description
+
+Allows painlessly cache request reuslt or any result that have a unique id. Saves client/service resources by minizing network request, and requested content.
+
 ## Usage
 
 ```
