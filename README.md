@@ -59,3 +59,9 @@ console.log(await cache.fetch(2)); // this should not produce any network reques
 console.log(await cache.batchGet([1, 2])) // this should not produce any network request
 console.log(await cache.batchGet([1, 2, 3, 4])) // this should produce one network request with batch requerst for id 3 and 4.
 ```
+
+## Contribute
+
+Issues and PRs are welcome! If you feel any functionalities that are crucial, you are also welcome to submit an Issue about it.
+
+
