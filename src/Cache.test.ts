@@ -140,7 +140,7 @@ describe('Cache', () => {
             expect(list).to.eql([{ id: 'a' }, { id: 'a' }, { id: 'b' }]);
         });
 
-        it('should get bulk list without single cached result', async () => {
+        it('should get bulk list without single cached result 1', async () => {
             const calledKeys: string[] = [];
             const fetch = async (id: string) => {
                 calledKeys.push(id);
@@ -160,6 +160,25 @@ describe('Cache', () => {
             const list = await cache.batchGet(['a', 'a', 'b']);
 
             expect(list).to.eql([{ id: 'aa' }, { id: 'aa' }, { id: 'b' }]);
+        });
+
+        it('should get bulk list without single cached result 2', async () => {
+            let error = '';
+            const fetch = async (id: string) => {
+                return { id };
+            };
+
+            const bulk = (ids: string[]) => {
+                error = 'test';
+                return Promise.resolve([]);
+            };
+
+            const cache = new Cache(getId, fetch, bulk);
+            cache.get('a');
+            cache.get('b');
+            const list = await cache.batchGet(['a', 'b']);
+            expect(error).to.equal('');
+            expect(list).to.eql([{ id: 'a' }, { id: 'b' }]);
         });
 
         it('should get bulk list without single queued result', async () => {
@@ -202,6 +221,30 @@ describe('Cache', () => {
             const list = await cache.batchGet(['a', 'b', 'c']);
 
             expect(list).to.eql([{ id: 'a' }, { id: 'c' }, null]);
+        });
+
+        it('should cross check multiple bulk requests', async () => {
+            const calledKeys: string[] = [];
+            const bulk = (ids: string[]) => {
+                return Promise.resolve(ids.map((id) => {
+                    if (calledKeys.indexOf(id) > -1) {
+                        return { id: '' };
+                    }
+                    calledKeys.push(id);
+                    return { id };
+                }));
+            };
+
+            const cache = new Cache(getId, null , bulk);
+            const [list1, list2, list3] = await Promise.all([
+                cache.batchGet(['a', 'b', 'c']),
+                cache.batchGet(['c']),
+                cache.batchGet(['b', 'c', 'd']),
+            ]);
+
+            expect(list1).to.eql([{ id: 'a' }, { id: 'b' }, { id: 'c' }]);
+            expect(list2).to.eql([{ id: 'c' }]);
+            expect(list3).to.eql([{ id: 'd' }, { id: 'b' }, { id: 'c' }]);
         });
 
         it('should call single fetch when bulk fetch is not available', async () => {
