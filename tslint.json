@@ -1,0 +1,38 @@
+{
+    "extends": [
+        "tslint-config-airbnb"
+    ],
+    "rules": {
+        "indent": [true, "spaces", 4],
+        "ter-indent": [true, 4],
+        "no-increment-decrement": [false],
+        "no-conditional-assignment": [true],
+        "max-line-length": [true, 120],
+        "radix": [false],
+        "typedef-whitespace": [
+            true,
+            {
+                "call-signature": "nospace",
+                "index-signature": "nospace",
+                "parameter": "nospace",
+                "property-declaration": "nospace",
+                "variable-declaration": "nospace"
+            },
+            {
+                "call-signature": "onespace",
+                "index-signature": "onespace",
+                "parameter": "onespace",
+                "property-declaration": "onespace",
+                "variable-declaration": "onespace"
+            }
+        ],
+        "one-line": [
+            true,
+            "check-catch",
+            "check-finally",
+            "check-else"
+        ],
+        "no-console": [true, "log"],
+        "no-trailing-whitespace": true
+    }
+}

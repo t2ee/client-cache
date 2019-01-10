@@ -1,0 +1,67 @@
+{
+  "name": "bulkcache",
+  "version": "0.1.0",
+  "description": "a bulk resource cache manager",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "nyc": {
+    "include": [
+      "dist/*"
+    ],
+    "exclude": [
+      "src/index.ts",
+      "src/*.test.ts",
+      "src/**/*.test.ts"
+    ],
+    "reporter": [
+      "html",
+      "lcov",
+      "text"
+    ],
+    "sourceMap": true,
+    "extesion": [
+      ".ts"
+    ]
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "tslint src/**/*.ts",
+    "prepublish": "npm test",
+    "mocha": "nyc mocha --ui bdd dist/*.test.js dist/**/*.test.js",
+    "test": "npm run lint && npm run build && npm run mocha"
+  },
+  "author": "Qiaosen Huang <joesonw@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
+    "tslint": "^5.12.0",
+    "tslint-config-airbnb": "^5.11.1",
+    "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.14.119",
+    "@types/q": "^1.5.1",
+    "lodash": "^4.17.11",
+    "q": "^1.5.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joesonw/bulkcache.git"
+  },
+  "keywords": [
+    "cache",
+    "resource",
+    "http",
+    "storage",
+    "persistance",
+    "parallel"
+  ],
+  "bugs": {
+    "url": "https://github.com/joesonw/bulkcache/issues"
+  },
+  "homepage": "https://github.com/joesonw/bulkcache#readme"
+}
