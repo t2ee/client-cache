@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import Filter from './Filter';
 import Cache from './Cache';
+import WaitGroup from './WaitGroup';
 
 interface TestData {
     id?: string;
@@ -99,6 +100,21 @@ describe('Cache', () => {
 
             expect(a1).to.eql({ id: 'a', c: lastValue });
             expect(a2).to.eql({ id: 'a', c: lastValue });
+        });
+
+        it('shuold handle concurrent fetch', async () => {
+            const wg = new WaitGroup(4);
+            const result: TestData[] = [];
+            const cache = new Cache(getId, (id: string) => Promise.resolve({ id }));
+            for (let i = 0; i < 4; i++) {
+                (async (i: number) => {
+                    const a = await cache.get(`a${i}`);
+                    result.push(a);
+                    wg.done(1);
+                })(i + 1);
+            }
+            await wg.wait();
+            expect(result).to.eql([{ id: 'a1' }, { id: 'a2' }, { id: 'a3' }, { id: 'a4' }]);
         });
     });
 
