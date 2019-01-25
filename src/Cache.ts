@@ -16,6 +16,14 @@ export default class Cache<K extends (string | number), V> {
     ) {
     }
 
+    flush() {
+        for (const [_, d] of this.queue.entries()) {
+            d.resolve(null);
+        }
+        this.queue.clear();
+        this.storage.clear();
+    }
+
     get(id: K): Promise<V> {
 
         // already cached, retrieve result directly

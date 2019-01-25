@@ -274,4 +274,20 @@ describe('Cache', () => {
             expect(list).to.eql([{ id: 'a' }, { id: 'b' }]);
         });
     });
+
+    describe('#flush()', () => {
+        it('shuold flush all data', async () => {
+            function getId(d: TestData): string {
+                return d.id;
+            }
+
+            let c = 1;
+            const cache = new Cache(getId, (id: string) => Promise.resolve({ id, c: c++ }));
+            const a1 = await cache.get('a1');
+            expect(a1).to.eql({ id: 'a1', c: 1 });
+            cache.flush();
+            const a12 = await cache.get('a1');
+            expect(a12).to.eql({ id: 'a1', c: 2 });
+        });
+    });
 });

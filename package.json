@@ -1,6 +1,6 @@
 {
   "name": "bulkcache",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "a bulk resource cache manager",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
