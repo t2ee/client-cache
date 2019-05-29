@@ -24,6 +24,10 @@ export default class Cache<K extends (string | number), V> {
         this.storage.clear();
     }
 
+    add(item: V) {
+        this.resolve(this.idGetter(item), item);
+    }
+
     get(id: K): Promise<V> {
 
         // already cached, retrieve result directly
