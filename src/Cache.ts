@@ -30,10 +30,13 @@ export default class Cache<K extends (string | number), V> {
     }
 
     async all(): Promise<V[]> {
-        if (!this.fetchAllDefer) {
+        if (this.fetchAll && !this.fetchAllDefer) {
             this.fetchAllDefer = Q.defer<V[]>();
             this.fetchAll()
-                .then(values => this.fetchAllDefer.resolve(values))
+                .then((values) => {
+                    values.forEach(v => this.resolve(this.idGetter(v), v));
+                    this.fetchAllDefer.resolve(values);
+                })
                 .catch((e) => {
                     const d = this.fetchAllDefer;
                     this.fetchAllDefer = null;
@@ -45,7 +48,9 @@ export default class Cache<K extends (string | number), V> {
             Array.from(this.queue.values())
                 .map(d => d.promise));
         result.push(...(await promises));
-        result.push(...await(this.fetchAllDefer.promise));
+        if (this.fetchAll) {
+            result.push(...await(this.fetchAllDefer.promise));
+        }
         return result;
     }
 

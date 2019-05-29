@@ -290,4 +290,57 @@ describe('Cache', () => {
             expect(a12).to.eql({ id: 'a1', c: 2 });
         });
     });
+
+    describe('#add()', () => {
+        it('shuold add data to cache and does not request', async () => {
+            let lastValue = 0;
+            const fetch = async (id: string) => {
+                await new Promise(r => setTimeout(r, 100));
+                lastValue = Math.random();
+                return { id, c: lastValue };
+            };
+
+            const cache = new Cache(getId, fetch);
+            cache.add({ id: 'a', c: 0 });
+            const [a1, a2] = await Promise.all([cache.get('a'), cache.get('a')]);
+            expect(a1).to.eql({ id: 'a', c: 0 });
+            expect(a2).to.eql({ id: 'a', c: 0 });
+        });
+    });
+
+    describe('#all()', () => {
+        it('shuold return all data in memory and in flight', async () => {
+            let lastValue = 0;
+            const fetch = async (id: string) => {
+                await new Promise(r => setTimeout(r, 100));
+                lastValue = Math.random();
+                return { id, c: lastValue };
+            };
+
+            const cache = new Cache(getId, fetch);
+            cache.add({ id: 'b', c: 0 });
+            const p = cache.get('a');
+            const all = await cache.all();
+            const a = all.find(item => item.id === 'a');
+            const b = all.find(item => item.id === 'b');
+            const a2 = await p;
+            expect(a).to.eql({ id: 'a', c: lastValue });
+            expect(a).to.eql(a2);
+            expect(a2).to.eql({ id: 'a', c: lastValue });
+            expect(b).to.eql({ id: 'b', c: 0 });
+        });
+
+        it('shuold return all data use fetchAll', async () => {
+            const fetchAll = async () => {
+                await new Promise(r => setTimeout(r, 10));
+                return [{ id: 'a', c: 0 }, { id: 'b', c: 1 }];
+            };
+
+            const cache = new Cache(getId, null, null, fetchAll);
+            const all = await cache.all();
+            expect(all.find(item => item.id === 'a')).to.eql({ id: 'a', c: 0 });
+            expect(all.find(item => item.id === 'b')).to.eql({ id: 'b', c: 1 });
+            expect(await cache.get('b')).to.eql({ id: 'b', c: 1 });
+        });
+    });
 });
