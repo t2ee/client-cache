@@ -17,9 +17,8 @@ export default class Cache<K extends (string | number), V> {
     }
 
     flush() {
-        for (const [_, d] of this.queue.entries()) {
-            d.resolve(null);
-        }
+        const err = new Error('All data/pending flushed');
+        Array.from(this.queue.values()).forEach(d => d.reject(err));
         this.queue.clear();
         this.storage.clear();
     }
