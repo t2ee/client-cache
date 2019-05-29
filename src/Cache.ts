@@ -28,6 +28,15 @@ export default class Cache<K extends (string | number), V> {
         this.resolve(this.idGetter(item), item);
     }
 
+    async all(): Promise<V[]> {
+        const result: V[] = Array.from(this.storage.values());
+        const promises = Promise.all(
+            Array.from(this.queue.values())
+                .map(d => d.promise));
+        result.push(...(await promises));
+        return result;
+    }
+
     get(id: K): Promise<V> {
 
         // already cached, retrieve result directly
