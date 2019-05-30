@@ -9,6 +9,7 @@ export default class Cache<K extends (string | number), V> {
     private errorHandler: (e: Error) => void = () => {};
     private fitlers: Filter<V>[] = [];
     private fetchAllDefer: Q.Deferred<V[]>;
+    private allFetched = false;
 
     constructor(
         private idGetter: (item: V) => K,
@@ -30,11 +31,12 @@ export default class Cache<K extends (string | number), V> {
     }
 
     async all(): Promise<V[]> {
-        if (this.fetchAll && !this.fetchAllDefer) {
+        if (!this.allFetched && this.fetchAll && !this.fetchAllDefer) {
             this.fetchAllDefer = Q.defer<V[]>();
             this.fetchAll()
                 .then((values) => {
                     values.forEach(v => this.resolve(this.idGetter(v), v));
+                    this.allFetched = true;
                     this.fetchAllDefer.resolve(values);
                 })
                 .catch((e) => {
@@ -48,7 +50,7 @@ export default class Cache<K extends (string | number), V> {
             Array.from(this.queue.values())
                 .map(d => d.promise));
         result.push(...(await promises));
-        if (this.fetchAll) {
+        if (!this.allFetched && this.fetchAll) {
             result.push(...await(this.fetchAllDefer.promise));
         }
         return result;
