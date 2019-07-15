@@ -53,10 +53,15 @@ export default class Cache<K extends (string | number), V> {
         if (!this.allFetched && this.fetchAll) {
             result.push(...await(this.fetchAllDefer.promise));
         }
-        return result;
+        return _.uniqBy(result, v => this.idGetter(v));
     }
 
     get(id: K): Promise<V> {
+        // is fetching all, so no need to fetch single
+        if (this.fetchAllDefer) {
+            return ((this.fetchAllDefer.promise as any) as Promise<V>)
+                .then(() => Promise.resolve(this.storage.get(id)));
+        }
 
         // already cached, retrieve result directly
         if (this.storage.has(id)) {
